@@ -1,5 +1,5 @@
 package loadBalancePolicy;
 
-public interface loadBalancePolicy {
+public interface LoadBalancePolicy {
     public int getIndex();
 }

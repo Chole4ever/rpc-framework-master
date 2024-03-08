@@ -1,6 +1,6 @@
 package baseInterface;
 
-public interface emotion {
+public interface Emotion {
     public void presentEmotion(String status);
 
 }

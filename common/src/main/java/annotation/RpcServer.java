@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface rpcServer {
+public @interface RpcServer {
 
     // 服务类型（被暴露的实现类的接口类型）
     Class<?> interfaceName();

@@ -1,7 +1,9 @@
 package baseInterface;
 
 
-public interface action {
+public interface Action {
     public void testService(String s);
+
+    public void test2(String s);
 
 }

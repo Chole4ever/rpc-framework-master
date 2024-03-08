@@ -1,12 +1,12 @@
-package cn.rpc.consumer;
+package provider;
 
-import cn.rpc.consumer.method.actionSpi;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class consumerApplication {
+public class ProviderApplication {
     public static void main(String[] args) {
-        SpringApplication.run(consumerApplication.class);
+        SpringApplication.run(ProviderApplication.class,args);
     }
 }

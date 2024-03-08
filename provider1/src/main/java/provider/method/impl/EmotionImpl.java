@@ -1,13 +1,13 @@
 package provider.method.impl;
 
-import annotation.rpcServer;
-import baseInterface.emotion;
+import annotation.RpcServer;
+import baseInterface.Emotion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@rpcServer(interfaceName = emotion.class,version = 1)
-public class emotionImpl implements emotion {
-    private Logger logger = LoggerFactory.getLogger(emotion.class);
+@RpcServer(interfaceName = Emotion.class,version = 1)
+public class EmotionImpl implements Emotion {
+    private Logger logger = LoggerFactory.getLogger(Emotion.class);
 
     @Override
     public void presentEmotion(String status) {
