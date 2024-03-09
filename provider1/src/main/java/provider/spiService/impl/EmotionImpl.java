@@ -1,4 +1,4 @@
-package provider.method.impl;
+package provider.spiService.impl;
 
 import annotation.RpcServer;
 import baseInterface.Emotion;

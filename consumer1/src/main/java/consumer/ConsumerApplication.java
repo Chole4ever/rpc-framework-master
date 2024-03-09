@@ -1,12 +1,11 @@
-package cn.rpc.consumer;
+package consumer;
 
-import baseInterface.Action;
-import cn.rpc.consumer.method.ActionSpi;
+import consumer.method.ActionSpi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import proxy.ProxyPool;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"service"})
 public class ConsumerApplication {
     public static void main(String[] args) {
 

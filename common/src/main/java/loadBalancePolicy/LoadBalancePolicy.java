@@ -1,5 +1,8 @@
 package loadBalancePolicy;
 
+import java.net.InetSocketAddress;
+
 public interface LoadBalancePolicy {
-    public int getIndex();
+    public InetSocketAddress getServiceInetSocketAddress(String serviceName);
+
 }

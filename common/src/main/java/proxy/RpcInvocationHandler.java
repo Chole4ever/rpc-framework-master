@@ -9,6 +9,7 @@ import protocol.RequestHeader;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 
 public class RpcInvocationHandler implements InvocationHandler {
 
@@ -33,6 +34,8 @@ public class RpcInvocationHandler implements InvocationHandler {
         //3.loadBalance execution
         LoadBalancePolicyFactory loadBalancePolicyFactory = LoadBalancePolicyFactory.getInstance();
         LoadBalancePolicy loadBalancePolicy = loadBalancePolicyFactory.getLoadBalancePolicy(annotation.loadBalancePolicy());
+        InetSocketAddress serviceInetSocketAddress = loadBalancePolicy.getServiceInetSocketAddress(serviceName);
+
 
         //4.do socket comm by netty
 

@@ -1,4 +1,4 @@
-package cn.rpc.consumer.method;
+package consumer.method;
 
 import annotation.RpcClient;
 import baseInterface.Action;

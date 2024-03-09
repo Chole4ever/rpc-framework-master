@@ -1,4 +1,4 @@
-package provider.method.impl;
+package provider.spiService.impl;
 
 import annotation.RpcServer;
 import org.slf4j.Logger;
