@@ -6,6 +6,8 @@ import loadBalancePolicy.LoadBalancePolicyFactory;
 import protocol.RequestBody;
 import protocol.RequestContent;
 import protocol.RequestHeader;
+import protocol.Response;
+import transport.NettyClientPool;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -38,9 +40,11 @@ public class RpcInvocationHandler implements InvocationHandler {
 
 
         //4.do socket comm by netty
+        NettyClientPool nettyClientPool = NettyClientPool.getInstance();
+        Response response = nettyClientPool.getResponse(serviceInetSocketAddress,requestContent);
 
 
-        return null;
+        return response.getResult();
     }
 }
 
