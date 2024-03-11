@@ -1,9 +1,11 @@
 package protocol;
 
+import lombok.Data;
 import utils.ByteUtil;
 
 import java.io.Serializable;
 
+@Data
 public class RequestBody implements Serializable {
     //接口名称
     private String interfaceName;
@@ -24,50 +26,6 @@ public class RequestBody implements Serializable {
         this.argumentsTypes = argumentsTypes;
         this.args = args;
     }
-    public byte[] toBytesArray(){
-        return ByteUtil.toByteArray(this);
-    }
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
-
-    public byte getVersion() {
-        return version;
-    }
-
-    public void setVersion(byte version) {
-        this.version = version;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Class<?>[] getArgumentsTypes() {
-        return argumentsTypes;
-    }
-
-    public void setArgumentsTypes(Class<?>[] argumentsTypes) {
-        this.argumentsTypes = argumentsTypes;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
-
-    public void setArgs(Object[] args) {
-        this.args = args;
-    }
-
-
 
 
 }

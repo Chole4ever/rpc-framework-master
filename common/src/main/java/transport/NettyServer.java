@@ -1,8 +1,8 @@
 package transport;
 
 
+import codec.InternalServerMsgCodec;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -10,6 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import protocol.BaseMsg;
 
 import javax.annotation.PostConstruct;
 import java.net.InetSocketAddress;
@@ -37,8 +38,8 @@ public class NettyServer {
                         @Override
                         protected void initChannel(NioServerSocketChannel nioServerSocketChannel) throws Exception {
                             nioServerSocketChannel.pipeline()
-                                    .addLast("codec",new InternalServerMsgCodec())
-                                    .addLast("handler",new NettyServerHandler());
+                                    .addLast("codec",new InternalServerMsgCodec(BaseMsg.class,BaseMsg.class))//入站+出站
+                                    .addLast("handler",new NettyServerHandler());//入站
                         }
 
 

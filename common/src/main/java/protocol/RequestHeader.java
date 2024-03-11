@@ -1,38 +1,40 @@
 package protocol;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.UUID;
 
+@Data
 public class RequestHeader implements Serializable {
-    //请求id，唯一标识当前请求
-    private Long requestId;
-    //request请求包长度
-    private int length;
+
+        /*
+    +---------------------------------------------------------------+
+    | 魔数 2byte | 协议版本号 1byte | 序列化算法 1byte | 报文类型 1byte  |
+    +---------------------------------------------------------------+
+    | 状态 1byte |        消息 ID 8byte     |      数据长度 4byte     |
+    +---------------------------------------------------------------+
+    */
+
+    private short magic; // 魔数
+
+    private byte version; // 协议版本号
+
+    private byte serialization; // 序列化算法
+
+    private byte msgType; // 报文类型
+
+    private byte status; // 状态
+
+    private long requestId; // 消息 ID
+
+    private int msgLen; // 数据长度
 
 
     public RequestHeader(byte[] requestBodyBytes)
     {
         this.requestId = Math.abs(UUID.randomUUID().getLeastSignificantBits());
-        this.length = requestBodyBytes.length;
+        this.msgLen = requestBodyBytes.length;
     }
-
-    public Long getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(Long requestId) {
-        this.requestId = requestId;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-
-
 
 }

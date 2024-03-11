@@ -1,4 +1,4 @@
-package Conf;
+package conf;
 
 public class Conf {
 }

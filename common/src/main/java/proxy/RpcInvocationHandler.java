@@ -4,7 +4,7 @@ import annotation.RpcClient;
 import loadBalancePolicy.LoadBalancePolicy;
 import loadBalancePolicy.LoadBalancePolicyFactory;
 import protocol.RequestBody;
-import protocol.RequestContent;
+import protocol.Request;
 import protocol.RequestHeader;
 import protocol.Response;
 import transport.NettyClientPool;
@@ -12,6 +12,7 @@ import transport.NettyClientPool;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 
 public class RpcInvocationHandler implements InvocationHandler {
 
@@ -31,7 +32,7 @@ public class RpcInvocationHandler implements InvocationHandler {
         RequestBody requestBody= new RequestBody();
         requestBody.setProperties(annotation.interfaceName().getName(), annotation.version(),methodName,parameterTypes,args);
         RequestHeader requestHeader = new RequestHeader(requestBody.toBytesArray());
-        RequestContent requestContent = new RequestContent(requestHeader,requestBody);
+        Request request = new Request(requestHeader,requestBody);
 
         //3.loadBalance execution
         LoadBalancePolicyFactory loadBalancePolicyFactory = LoadBalancePolicyFactory.getInstance();
@@ -41,10 +42,10 @@ public class RpcInvocationHandler implements InvocationHandler {
 
         //4.do socket comm by netty
         NettyClientPool nettyClientPool = NettyClientPool.getInstance();
-        Response response = nettyClientPool.getResponse(serviceInetSocketAddress,requestContent);
+        CompletableFuture<Response> responseCompletableFuture = nettyClientPool.getResponse(serviceInetSocketAddress, request);
+        Object response = responseCompletableFuture.get();
 
-
-        return response.getResult();
+        return response;
     }
 }
 

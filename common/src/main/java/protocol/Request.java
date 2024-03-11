@@ -1,9 +1,15 @@
 package protocol;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
-public class RequestContent implements Serializable {
+
+@Data
+public class Request extends BaseMsg implements Serializable{
+
     private RequestBody requestBody;
+
     private RequestHeader requestHeader;
 
     //释放
@@ -11,7 +17,7 @@ public class RequestContent implements Serializable {
         requestHeader = null;
         requestBody = null;
     }
-     public RequestContent(RequestHeader requestHeader,RequestBody requestBody)
+     public Request(RequestHeader requestHeader, RequestBody requestBody)
      {
        this.requestHeader =requestHeader;
        this.requestBody = requestBody;

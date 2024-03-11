@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import protocol.Response;
 
+import java.util.concurrent.CompletableFuture;
+
 import static msg.MsgPool.RESPONSE_MAP;
 
 /*
@@ -16,7 +18,9 @@ public class NettyClientHandler extends SimpleChannelInboundHandler<Response> {
             if(response==null) {
                 return;
             } else {
-                RESPONSE_MAP.put(response.getRequestId(),response);
+                CompletableFuture<Response> resultFuture = RESPONSE_MAP.get(response.getRequestId());
+                resultFuture.complete(response);
+                RESPONSE_MAP.remove(response.getRequestId());
             }
     }
 

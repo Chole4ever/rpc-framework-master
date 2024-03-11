@@ -1,5 +1,6 @@
 package transport;
 
+import codec.InternalServerMsgCodec;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -8,16 +9,21 @@ import io.netty.channel.pool.AbstractChannelPoolMap;
 import io.netty.channel.pool.ChannelPoolMap;
 import io.netty.channel.pool.FixedChannelPool;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-import msg.MsgPool;
-import protocol.RequestContent;
+import org.checkerframework.checker.units.qual.C;
+import protocol.BaseMsg;
+import protocol.Request;
 import protocol.Response;
 
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import static msg.MsgPool.RESPONSE_MAP;
 
 public class NettyClientPool {
 
@@ -37,28 +43,23 @@ public class NettyClientPool {
      */
     private Bootstrap bootstrap = new Bootstrap();
 
-    public Response getResponse(InetSocketAddress inetSocketAddress, RequestContent requestContent) throws ExecutionException, InterruptedException {
+    /*
+    异步回调
+     */
+    public CompletableFuture<Response> getResponse(InetSocketAddress inetSocketAddress, Request request) throws ExecutionException, InterruptedException {
         FixedChannelPool channelPool = CHANNEL_POOL_MAP.get(inetSocketAddress);
-        channelPool.acquire().addListener((GenericFutureListener<? extends Future<? super Channel>>) new GenericFutureListener<ChannelFuture>() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if(channelFuture.isSuccess())
-                {
-                    Channel channel = channelFuture.channel();
-                    ChannelFuture channelFutureMSG = channel.writeAndFlush(requestContent);
-                    channelFutureMSG.addListener(new ChannelFutureListener() {
-                        @Override
-                        public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                            if(channelFuture.isSuccess())
-                            {
+        CompletableFuture<Response> resultFuture = new CompletableFuture<>();
 
-                            }
-                        }
-                    });
-                }
+        Future<Channel>channelFuture = channelPool.acquire();
+        channelFuture.addListener(new GenericFutureListener<Future<Channel>>() {
+            @Override
+            public void operationComplete(Future<Channel> future) throws Exception {
+                RESPONSE_MAP.put(request.getRequestHeader().getRequestId(), resultFuture);
+                Channel channel = future.get();
+                channel.writeAndFlush(request);
             }
         });
-        return null;
+        return resultFuture;
     }
 
 
@@ -77,8 +78,8 @@ public class NettyClientPool {
             protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
                 ChannelPipeline channelPipeline = nioSocketChannel.pipeline();
                 channelPipeline
-                        .addLast(new InternalServerMsgCodec())
-                        .addLast(new NettyClientHandler());
+                        .addLast("codec",new InternalServerMsgCodec(BaseMsg.class,BaseMsg.class))//入站（解码）+出站（编码）
+                        .addLast("handler",new NettyClientHandler());//入站（存入数据response）
             }
         });
         CHANNEL_POOL_MAP = new AbstractChannelPoolMap<InetSocketAddress, FixedChannelPool>() {
