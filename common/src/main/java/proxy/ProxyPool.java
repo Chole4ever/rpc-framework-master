@@ -1,5 +1,6 @@
 package proxy;
 
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,9 +11,7 @@ public class ProxyPool {
 
     public static <T>T getProxy(Class<T> spiClz){
 
-        Object proxy = PROXY_MAP.computeIfAbsent(spiClz,(clz)->RpcProxy.getProxy(spiClz));
-        return (T) proxy;
-
+        return (T) PROXY_MAP.computeIfAbsent(spiClz, k-> RpcProxy.getProxy(spiClz));
     }
 
     private ProxyPool() {

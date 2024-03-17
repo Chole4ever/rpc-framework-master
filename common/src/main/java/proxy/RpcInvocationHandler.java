@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class RpcInvocationHandler implements InvocationHandler {
 
@@ -28,10 +29,12 @@ public class RpcInvocationHandler implements InvocationHandler {
         String serviceName = annotation.interfaceName().getName();
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
-        //2.wrap in request
+
+        //2.wrap in a request
         RequestBody requestBody= new RequestBody();
-        requestBody.setProperties(annotation.interfaceName().getName(), annotation.version(),methodName,parameterTypes,args);
-        RequestHeader requestHeader = new RequestHeader(requestBody.toBytesArray());
+        requestBody.setProperties(annotation.interfaceName().getName(),methodName,parameterTypes,args);
+
+        RequestHeader requestHeader = new RequestHeader(annotation.version(), (byte) 1, (byte) 2, (byte) 1,requestBody);
         Request request = new Request(requestHeader,requestBody);
 
         //3.loadBalance execution
@@ -43,9 +46,8 @@ public class RpcInvocationHandler implements InvocationHandler {
         //4.do socket comm by netty
         NettyClientPool nettyClientPool = NettyClientPool.getInstance();
         CompletableFuture<Response> responseCompletableFuture = nettyClientPool.getResponse(serviceInetSocketAddress, request);
-        Object response = responseCompletableFuture.get();
 
-        return response;
+        return responseCompletableFuture.get(1000, TimeUnit.SECONDS);
     }
 }
 

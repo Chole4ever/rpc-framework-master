@@ -20,8 +20,8 @@ import protocol.Response;
 
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 import static msg.MsgPool.RESPONSE_MAP;
 
@@ -47,19 +47,22 @@ public class NettyClientPool {
     异步回调
      */
     public CompletableFuture<Response> getResponse(InetSocketAddress inetSocketAddress, Request request) throws ExecutionException, InterruptedException {
-        FixedChannelPool channelPool = CHANNEL_POOL_MAP.get(inetSocketAddress);
-        CompletableFuture<Response> resultFuture = new CompletableFuture<>();
 
-        Future<Channel>channelFuture = channelPool.acquire();
-        channelFuture.addListener(new GenericFutureListener<Future<Channel>>() {
-            @Override
-            public void operationComplete(Future<Channel> future) throws Exception {
-                RESPONSE_MAP.put(request.getRequestHeader().getRequestId(), resultFuture);
-                Channel channel = future.get();
-                channel.writeAndFlush(request);
+//        ChannelFuture channelFuture = bootstrap.connect(inetSocketAddress).sync();
+//        NioSocketChannel nioSocketChannel = (NioSocketChannel) channelFuture.channel();
+//        nioSocketChannel.writeAndFlush(request);
+
+        FixedChannelPool channelPool = CHANNEL_POOL_MAP.get(inetSocketAddress);
+        CompletableFuture<Response> completableFuture = new CompletableFuture<>();
+        channelPool.acquire().sync().addListener(future -> {
+            if(future.isSuccess())
+            {
+                NioSocketChannel channel = (NioSocketChannel) future.get();
+                channel.writeAndFlush(request).sync();
             }
         });
-        return resultFuture;
+        RESPONSE_MAP.put(request.getRequestHeader().getRequestId(), completableFuture);
+        return completableFuture;
     }
 
 
@@ -88,12 +91,15 @@ public class NettyClientPool {
                 return new FixedChannelPool(bootstrap.remoteAddress(inetSocketAddress), new AbstractChannelPoolHandler() {
                     @Override
                     public void channelCreated(Channel channel) throws Exception {
-                        //Called once a new Channel is created in the ChannelPool.
-                        // This method will be called by the EventLoop of the Channel.
+                        channel.pipeline()
+                                .addLast("codec",new InternalServerMsgCodec(BaseMsg.class,BaseMsg.class))//入站（解码）+出站（编码）
+                                .addLast("handler",new NettyClientHandler());//入站（存入数据response）
                     }
+
                 },MAX_CONNECTION);
             }
-            ///Called once a new ChannelPool needs to be created as non exists yet for the key.
         };
+
+
     }
 }

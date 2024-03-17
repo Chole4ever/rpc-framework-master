@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class Request extends BaseMsg implements Serializable{
 
     private RequestBody requestBody;
-
     private RequestHeader requestHeader;
 
     //释放

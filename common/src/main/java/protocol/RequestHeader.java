@@ -1,9 +1,14 @@
 package protocol;
 
+import codec.RpcSerialization;
+import codec.SerializationFactory;
 import lombok.Data;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
+
+import static constants.ProtocolConstants.MAGIC;
 
 @Data
 public class RequestHeader implements Serializable {
@@ -31,10 +36,19 @@ public class RequestHeader implements Serializable {
     private int msgLen; // 数据长度
 
 
-    public RequestHeader(byte[] requestBodyBytes)
-    {
+    public RequestHeader(byte version,byte serialization,byte msgType,byte status,RequestBody requestBody) throws IOException {
+        this.magic = MAGIC;
+        this.version = version;
+        this.serialization = serialization;
+        this.msgType = msgType;
+        this.status =status;
         this.requestId = Math.abs(UUID.randomUUID().getLeastSignificantBits());
-        this.msgLen = requestBodyBytes.length;
+        RpcSerialization serializationUtil = SerializationFactory.getRpcSerialization(serialization);
+        byte[] data = serializationUtil.serialize(requestBody);
+
+        this.msgLen = data.length;
+
+
     }
 
 }
