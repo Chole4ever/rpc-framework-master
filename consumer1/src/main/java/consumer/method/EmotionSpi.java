@@ -1,8 +1,8 @@
 package consumer.method;
 
-import annotation.RpcClient;
-import baseInterface.Emotion;
+import common.annotation.RpcClient;
+import baseInterface.service.EmotionService;
 
-@RpcClient(interfaceName = Emotion.class,version = 1)
-public interface EmotionSpi extends Emotion {
+@RpcClient(interfaceName = EmotionService.class)
+public interface EmotionSpi extends EmotionService {
 }

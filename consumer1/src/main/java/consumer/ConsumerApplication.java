@@ -3,13 +3,9 @@ package consumer;
 import consumer.method.ActionSpi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import proxy.ProxyPool;
+import client.proxy.ProxyPool;
 
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-@SpringBootApplication(scanBasePackages = {"service"})
+@SpringBootApplication(scanBasePackages = {"client","common"})
 public class ConsumerApplication {
     public static void main(String[] args) {
 

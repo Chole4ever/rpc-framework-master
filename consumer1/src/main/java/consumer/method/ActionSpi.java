@@ -1,10 +1,9 @@
 package consumer.method;
 
-import annotation.RpcClient;
-import baseInterface.Action;
-import loadBalancePolicy.impl.RandomLoadBalance;
+import common.annotation.RpcClient;
+import baseInterface.service.ActionService;
 
-@RpcClient(interfaceName = Action.class,version = 1,loadBalancePolicy = RandomLoadBalance.class)
-public interface ActionSpi extends Action {
+@RpcClient(interfaceName = ActionService.class)
+public interface ActionSpi extends ActionService {
 
 }

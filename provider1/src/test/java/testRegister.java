@@ -1,5 +1,5 @@
 
-import annotation.RpcServer;
+import common.annotation.RpcServer;
 import org.junit.Test;
 import org.reflections.Reflections;
 import java.util.Set;

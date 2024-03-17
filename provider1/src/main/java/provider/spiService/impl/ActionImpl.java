@@ -1,13 +1,14 @@
 package provider.spiService.impl;
 
-import annotation.RpcServer;
+import common.annotation.RpcServer;
+import common.constants.ProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import baseInterface.Action;
+import baseInterface.service.ActionService;
 
 
-@RpcServer(interfaceName = Action.class,version = 1)
-public class ActionImpl implements Action {
+@RpcServer(interfaceName = ActionService.class, serialization = ProtocolConstants.HESSIAN)
+public class ActionImpl implements ActionService {
 
     private Logger logger = LoggerFactory.getLogger(ActionImpl.class);
 
@@ -17,7 +18,7 @@ public class ActionImpl implements Action {
     }
 
     @Override
-    public void test2(String s) {
+    public void testAction(String s) {
         logger.info("this is service from provider1+test2  "+s);
     }
 
