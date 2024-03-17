@@ -8,4 +8,4 @@ SpringBoot+nacos+netty for rpc framework
 基于Netty实现多通讯方案：支持 TCP 和 HTTP 两种通讯方式进行服务调用
     1. http方式 类似feign的调用 
     2.TCP使用了netty，自定义消息协议
-支持多种序列化协议，比如hession，protobuf，Json![image](https://github.com/Chole4ever/rpc-framework-master/assets/83125389/3c94b543-a252-4a42-82be-03859e9b3256)
+支持多种序列化协议，比如hession，protobuf，Json
